@@ -1,6 +1,6 @@
 import os
 import functools
-from typing import Callable, Literal, overload
+from typing import Callable, overload
 import sqlalchemy.engine.url
 from dotenv import dotenv_values
 from pathlib import Path
@@ -40,6 +40,7 @@ def _get_env_var[
     except (ValueError, TypeError) as e:
         raise InvalidEnvVarError(key, str_value) from e
 
+
 @functools.lru_cache(1)
 def database_connection_string() -> str:
     def coerce_connection_string(db_url: str):
@@ -50,19 +51,6 @@ def database_connection_string() -> str:
         return db_url
 
     return _get_env_var("DATABASE_CONNECTION_STRING", coerce=coerce_connection_string)
-
-
-def database_connection_type() -> Literal["sqlite", "postgresql"]:
-    connection_string = database_connection_string()
-
-    if connection_string.startswith("sqlite"):
-        return "sqlite"
-    elif connection_string.startswith("postgresql"):
-        return "postgresql"
-    else:
-        raise ValueError(
-            f"Unsupported database connection string type: {connection_string}"
-        )
 
 
 def _surround_with_quotes(string: str) -> str:

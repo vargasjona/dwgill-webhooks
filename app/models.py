@@ -3,21 +3,20 @@ import datetime as dt
 from enum import StrEnum
 from typing import Mapping, Optional, TypeAlias, cast
 from pydantic import field_validator
-from app.hashing import (
-    test_secret_plaintext_against_hash, hash_new_secret
-)
+from app.hashing import test_secret_plaintext_against_hash, hash_new_secret
 from sqlalchemy.ext.asyncio import create_async_engine
 from sqlmodel import Field, SQLModel, func, JSON
 from sqlmodel.ext.asyncio.session import AsyncSession
-from sqlalchemy.dialects.postgresql import JSONB as PG_JSONB
 import sqlalchemy.orm.attributes
 from uuid import uuid4, UUID
 import env
 
 PermissionMapping: TypeAlias = Mapping[str, str | Mapping[str, str]]
 
+
 class ClientType(StrEnum):
-    Webhook = 'webhook'
+    Webhook = "webhook"
+
 
 class Client(SQLModel, table=True):
     id: Optional[int] = Field(default=None, primary_key=True, allow_mutation=False)
@@ -40,10 +39,7 @@ class Client(SQLModel, table=True):
     secret_salt: str = Field()
     secret_version: int = Field()
 
-    permissions: PermissionMapping = Field(
-        default_factory=lambda: {},
-        sa_type=PG_JSONB if env.database_connection_type() == "postgresql" else JSON
-    )
+    permissions: PermissionMapping = Field(default_factory=lambda: {}, sa_type=JSON)
 
     client_type: ClientType = Field()
 
@@ -72,7 +68,9 @@ class Client(SQLModel, table=True):
 
 
 async def main():
-    engine = create_async_engine(env.database_connection_string(), echo=True)
+    engine = create_async_engine(
+        env.database_connection_string(), echo=True, future=True
+    )
 
     async with engine.begin() as conn:
         await conn.run_sync(Client.metadata.drop_all)
@@ -81,9 +79,7 @@ async def main():
     async with AsyncSession(engine) as session, session.begin():
         client = Client(
             display_name="Test Client",
-            **hash_new_secret(
-                secret_plaintext="Hello World"
-            ),
+            **hash_new_secret(secret_plaintext="Hello World"),
             client_type=ClientType.Webhook,
         )
 
