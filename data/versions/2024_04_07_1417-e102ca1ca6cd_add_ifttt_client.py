@@ -23,6 +23,7 @@ down_revision: Union[str, None] = "196ac29f1c21"
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
 
+# Reference: https://stackoverflow.com/a/24623979/11121928
 
 def upgrade() -> None:
     async def handle_upgrade(async_connection: AsyncConnection):

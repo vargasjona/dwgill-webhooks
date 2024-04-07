@@ -30,6 +30,7 @@ target_metadata = SQLModel.metadata
 # my_important_option = config.get_main_option("my_important_option")
 # ... etc.
 
+# Reference: https://github.com/jonra1993/fastapi-sqlmodel-alembic/blob/main/project/migrations/env.py
 
 def run_migrations_offline() -> None:
     """Run migrations in 'offline' mode.
