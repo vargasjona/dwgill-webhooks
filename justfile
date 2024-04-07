@@ -28,3 +28,5 @@ new-env-encryption-key KEY_PATH:
 crypt *ARGS:
     poetry run python -m scripts.crypt "$@"
 
+hashing *ARGS:
+    poetry run python -m app.hashing "$@"

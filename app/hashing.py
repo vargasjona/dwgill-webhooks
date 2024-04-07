@@ -132,9 +132,13 @@ def _cli_main():
     test_parser.add_argument("salt", type=str, help="Salt")
     test_parser.add_argument("--version", type=int, default=1, help="Secret version")
 
+    # Random string command
+    random_string_parser = subparsers.add_parser("random-string", help="Generate a random string")
+    random_string_parser.add_argument("--version", type=int, default=1, help="Secret version")
+
     args = parser.parse_args()
 
-    command: Literal["new", "test"] = args.command
+    command: Literal["new", "test", "random-string"] = args.command
 
     match command:
         case "new":
@@ -159,6 +163,10 @@ def _cli_main():
             )
             print("Result:", result)
             print("Version:", secret_version)
+        case "random-string":
+            secret_version: int = args.version
+            salt = new_salt(secret_version=secret_version)
+            print("Random string:", salt)
         case _:
             parser.print_help()
 
