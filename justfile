@@ -11,7 +11,7 @@ _ensure_env_file:
     touch "$PWD/.env"
 
 models: _ensure_env_file
-    poetry run python -m app.models "$@"
+    poetry run python -m app.db.models "$@"
 
 secrets *ARGS: _ensure_env_file
     poetry run python -m app.secrets "$@"
@@ -30,3 +30,6 @@ crypt *ARGS:
 
 hashing *ARGS:
     poetry run python -m app.hashing "$@"
+
+run:
+    uvicorn app.api:app --reload

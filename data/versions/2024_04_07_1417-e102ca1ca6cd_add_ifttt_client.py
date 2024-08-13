@@ -13,7 +13,7 @@ import sqlalchemy as sa
 import sqlmodel
 import sqlmodel.sql.sqltypes
 from sqlmodel.ext.asyncio.session import AsyncSession
-from app.models import Client, ClientType
+from app.db.models import Client, ClientType
 from sqlalchemy.ext.asyncio import AsyncConnection
 import uuid
 

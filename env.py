@@ -9,22 +9,9 @@ env_file_values = dotenv_values(
     os.environ.get("ENV_FILE_PATH", str(Path.cwd() / ".env"))
 )
 
-
-@overload
 def _get_env_var[
     T
-](key: str, *, coerce: Callable[[str], T] = str,) -> T: ...
-
-
-@overload
-def _get_env_var[
-    T
-](key: str, default: str, *, coerce: Callable[[str], T] = str,) -> T: ...
-
-
-def _get_env_var[
-    T
-](key: str, default: str | None = None, *, coerce: Callable[[str], T] = str,) -> T:
+](key: str, default: str | None = None, *, coerce: Callable[[str], T],) -> T:
     str_value = os.environ.get(key, None)
     if str_value is None:
         str_value = env_file_values.get(key, None)
@@ -52,6 +39,18 @@ def database_connection_string() -> str:
 
     return _get_env_var("DATABASE_CONNECTION_STRING", coerce=coerce_connection_string)
 
+
+def database_pool_size() -> int:
+    # See https://docs.sqlalchemy.org/en/20/core/pooling.html#sqlalchemy.pool.QueuePool.params.pool_size
+    return _get_env_var("DATABASE_POOL_SIZE", default="5", coerce=int)
+
+def database_max_overflow() -> int:
+    # See https://docs.sqlalchemy.org/en/20/core/pooling.html#sqlalchemy.pool.QueuePool.params.max_overflow
+    return _get_env_var("DATABASE_MAX_OVERFLOW", default="10", coerce=int)
+
+def database_pool_timeout() -> int:
+    # See https://docs.sqlalchemy.org/en/20/core/pooling.html#sqlalchemy.pool.QueuePool.params.timeout
+    return _get_env_var("DATABASE_POOL_TIMEOUT", default="30", coerce=int)
 
 def _surround_with_quotes(string: str) -> str:
     if "'" not in string:
